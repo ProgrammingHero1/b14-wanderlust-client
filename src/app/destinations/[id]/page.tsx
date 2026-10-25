@@ -16,6 +16,9 @@ import type { IDestination } from "@/lib/types/destinations";
 import EditDestinationDialog from "@/components/destination/EditDestinationDialog";
 import DeleteDestinationDialog from "@/components/destination/DeleteDestinationDialog";
 import BookingCard from "@/components/booking/BookingCard";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const highlights = [
   "Professional local guide",
@@ -24,10 +27,6 @@ const highlights = [
   "Small group experience",
   "All entrance fees covered",
 ];
-
-
-
-
 
 // Deterministic pseudo-rating from the id (the API has no rating/review field)
 function rating(id: string) {
@@ -47,7 +46,13 @@ const DestinationDetailsPage = async ({
 }) => {
   const { id } = await params;
 
-  const res = await fetch(`http://localhost:8000/destination/${id}`);
+  const token = await getTokenFromServer()
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/destination/${id}`, {
+    headers: {
+      authorization: `Bearer ${token}`
+    }
+  });
   if (!res.ok) notFound();
   const destination: IDestination = await res.json();
 
@@ -63,12 +68,9 @@ const DestinationDetailsPage = async ({
           Back to Destinations
         </Link>
         <div className="flex items-center gap-3">
-          
+          <EditDestinationDialog destination={destination} />
 
-          <EditDestinationDialog destination ={destination}/>
-
-          <DeleteDestinationDialog id={id}/>
-       
+          <DeleteDestinationDialog id={id} />
         </div>
       </div>
 
@@ -141,7 +143,7 @@ const DestinationDetailsPage = async ({
           </div>
 
           {/* Sidebar */}
-              <BookingCard  destination={destination}/>
+          <BookingCard destination={destination} />
         </div>
       </div>
     </main>
