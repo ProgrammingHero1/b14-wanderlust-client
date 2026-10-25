@@ -18,7 +18,7 @@ const BookingCard = ({ destination }: { destination: IDestination }) => {
 
   // console.log(destination)
 
-  const handleBooking = async (e) => {
+  const handleBooking = async (e: React.SubmitEvent<HTMLElement>) => {
     e.preventDefault()
     const departureDate = e.target.departureDate.value 
     

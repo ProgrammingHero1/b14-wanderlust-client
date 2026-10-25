@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { IDestination } from "@/lib/types/destinations";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const categories = ["Beach", "Mountain", "City", "Adventure", "Cultural"];
 
@@ -51,12 +52,15 @@ const EditDestinationDialog = ({ destination } : {destination: IDestination}) =>
 
     const { _id, ...updatedData } = form;
 
+    const token = await getTokenFromClient()
+
     const res = await fetch(
-      `http://localhost:8000/destination/${destination._id}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/destination/${destination._id}`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
         },
         body: JSON.stringify(updatedData),
       },
